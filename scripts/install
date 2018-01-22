@@ -1,0 +1,70 @@
+#!/bin/bash
+set -eu
+
+# Retrieve arguments
+app=$YNH_APP_INSTANCE_NAME
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+language=$YNH_APP_ARG_LANGUAGE
+vboxuser=$YNH_APP_ARG_VBOXUSER
+vboxpassword=$YNH_APP_ARG_VBOXPASSWORD
+vboxip=$YNH_APP_ARG_VBOXIP
+vboxport=$YNH_APP_ARG_VBOXPORT
+
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+
+ynh_app_setting_set "$app" admin "$admin"
+ynh_app_setting_set "$app" language "$language"
+
+# Check domain/path availability
+sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+    || ynh_die "Path not available: ${domain}${path}"
+
+
+# check dependances
+if ! ynh_package_is_installed "php-pear" ; then
+  ynh_package_install "php-pear"
+fi
+
+if ! ynh_package_is_installed "unzip" ; then
+  ynh_package_install "unzip"
+fi
+
+# Copy source files
+src_path=/var/www/$app
+wget  http://freefr.dl.sourceforge.net/project/phpvirtualbox/phpvirtualbox-5.0-5.zip
+unzip phpvirtualbox-5.0-5.zip
+sudo mkdir $src_path
+sudo mv phpvirtualbox-5.0-5/* $src_path/
+
+# Modifiy Phpvirtualbox conf
+vbox_conf=../conf/config.php-example
+sed -i "s@VBOX_IP@$vboxip@g" $vbox_conf
+sed -i "s@VBOX_PORT@$vboxport@g" $vbox_conf
+sed -i "s@VBOX_USER@$vboxuser@g" $vbox_conf
+sed -i "s@VBOX_PASSWORD@$vboxpassword@g" $vbox_conf
+sed -i "s@LANGUAGE@$language@g" $vbox_conf
+sudo cp $vbox_conf  $src_path/config.php
+pwd
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+nginx_conf=../conf/nginx.conf
+sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
+sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
+sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+
+# Modify PHP-fpm
+phpfpm_conf=../conf/php-fpm.conf
+sed -i "s@YNH_WWW_APP@$app@g" $phpfpm_conf
+sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $phpfpm_conf
+finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+sudo cp ../conf/php-fpm.conf $finalphpconf
+sudo chown root: $finalphpconf
+sudo chmod 644 $finalphpconf
+sudo chown -R www-data:www-data $src_path
+# Reload services
+sudo service php5-fpm reload
+sudo service nginx reload

@@ -1,0 +1,100 @@
+{
+    "name": "phpvirtualbox",
+    "id": "phpvirtualbox",
+    "packaging_format": 1,
+    "description": {
+        "en": "PhpVirtualBox for YunoHost.",
+        "fr": "PhpVirtualBox pour YunoHost."
+    },
+    "url": "http://phpvirtualbox.sourceforge.net/",
+    "license": "free",
+    "maintainer": {
+        "name": "Jeremy MANSON",
+        "email": "jeremy.manson@jamson.fr",
+        "url": "https://www.jmanson.fr"
+    },
+    "requirements": {
+        "yunohost": ">> 2.4.0"
+    },
+    "multi_instance": false,
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+		"type": "domain",
+                "ask": {
+                    "en": "Choose a domain name for phpvirtualbox",
+                    "fr": "Choisissez un nom de domaine pour phpvirtualbox"
+                },
+                "example": "example.com"
+            },
+            {
+                "name": "path",
+		"type": "path",
+                "ask": {
+                    "en": "Choose a path for phpvirtualbox",
+                    "fr": "Choisissez un chemin pour phpvirtualbox"
+                },
+                "example": "/virtualbox",
+                "default": "/virtualbox"
+            },
+            {
+                "name": "admin",
+		"type": "user",
+                "ask": {
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l’administrateur"
+                },
+                "example": "johndoe"
+            },
+            {
+                "name": "vboxuser",
+                "ask": {
+                    "en": "Enter the virtualbox's user name",
+                    "fr": "Entrez le nom d'utilisateur de virtualbox"
+                },
+                "example": "vbox"
+            },
+
+            {
+                "name": "vboxpassword",
+                "type": "password",
+                "ask": {
+                    "en": "Enter the password of virtualbox's user",
+                    "fr": "Entrez le mot de passe de l'utilisateur virtualbox"
+                },
+                "example": "super_secret_password"
+            },
+            {
+                "name": "vboxip",
+                "ask": {
+                    "en": "Enter the virtualbox's host IP",
+                    "fr": "Entrez l'ip de l'hote virtualbox"
+                },
+                "example": "192.168.1.200"
+            },
+            {
+                "name": "vboxport",
+                "ask": {
+                    "en": "Enter the virtualbox's port",
+                    "fr": "Entrez le port de virtualbox"
+                },
+                "example": "18083",
+                "default": "18083"
+	    },
+
+            {
+                "name": "language",
+                "ask": {
+                    "en": "Choose the application language",
+                    "fr": "Choisissez la langue de l'application"
+                },
+                "choices": ["fr", "en"],
+                "default": "fr"
+            }
+        ]
+    }
+}
