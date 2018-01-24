@@ -59,16 +59,6 @@
                 "example": "192.168.1.200"
             },
             {
-                "name": "vboxport",
-                "ask": {
-                    "en": "Enter the virtualbox's port",
-                    "fr": "Entrez le port de virtualbox"
-                },
-                "example": "18083",
-                "default": "18083"
-	    },
-
-            {
                 "name": "language",
                 "ask": {
                     "en": "Choose the application language",
