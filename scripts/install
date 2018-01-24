@@ -33,8 +33,8 @@ if ! ynh_package_is_installed "unzip" ; then
 fi
 
 # Copy source files
-src_path=/var/www/$(app)
-datadir=/home/yunohost.$(app)/
+src_path=/var/www/$app
+datadir=/home/yunohost.$app/
 
 wget http://freefr.dl.sourceforge.net/project/phpvirtualbox/phpvirtualbox-5.0-5.zip
 unzip phpvirtualbox-5.0-5.zip
@@ -79,12 +79,12 @@ sudo apt-get update
 sudo apt-get install virtualbox-5.0 --no-install-recommends -y
 wget http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
 yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
-sudo useradd -p $(vboxpassword) -d $(datadir) -m -g vboxusers -s /bin/bash $(vboxuser)
+sudo useradd -p $vboxpassword -d $datadir -m -g vboxusers -s /bin/bash $vboxuser
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
 sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
 sudo sh -c "echo "#!/bin/bash" > /etc/init.d/vboxweb"
 sudo sh -c "echo "sudo -u vbox vboxwebsrv &" >> /etc/init.d/vboxweb"
 chmod +x   /etc/init.d/vboxweb
 sudo update-rc.d vboxweb defaults
-wget -P $(datadir) http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
+wget -P $datadir http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
 chown -R vbox: "$datadir"
