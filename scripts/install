@@ -36,7 +36,7 @@ fi
 src_path=/var/www/$(app)
 datadir=/home/yunohost.$(app)/
 
-wget  -q http://freefr.dl.sourceforge.net/project/phpvirtualbox/phpvirtualbox-5.0-5.zip
+wget http://freefr.dl.sourceforge.net/project/phpvirtualbox/phpvirtualbox-5.0-5.zip
 unzip phpvirtualbox-5.0-5.zip
 sudo mkdir $src_path
 sudo mv phpvirtualbox-5.0-5/* $src_path/
@@ -74,10 +74,10 @@ sudo service nginx reload
 # Installation de virtualbox 
 
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian jessie contrib' >> /etc/apt/sources.list.d/virtualbox.list"
-wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc -O- | sudo apt-key add -
+wget http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc -O- | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install virtualbox-5.0 --no-install-recommends -y
-wget -q http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
+wget http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
 yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
 sudo useradd -p $(vboxpassword) -d $(datadir) -m -g vboxusers -s /bin/bash $(vboxuser)
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
@@ -86,5 +86,5 @@ sudo sh -c "echo "#!/bin/bash" > /etc/init.d/vboxweb"
 sudo sh -c "echo "sudo -u vbox vboxwebsrv &" >> /etc/init.d/vboxweb"
 chmod +x   /etc/init.d/vboxweb
 sudo update-rc.d vboxweb defaults
-wget -q -P $(datadir) http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
+wget -P $(datadir) http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
 chown -R vbox: "$datadir"
