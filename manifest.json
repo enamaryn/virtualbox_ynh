@@ -3,8 +3,8 @@
     "id": "virtualbox",
     "packaging_format": 1,
     "description": {
-        "en": "Virtualbox & PhpVirtualBox for YunoHost.",
-        "fr": "Virtualbox & PhpVirtualBox pour YunoHost."
+        "en": "Virtualbox and PhpVirtualBox for YunoHost.",
+        "fr": "Virtualbox et PhpVirtualBox pour YunoHost."
     },
     "url": "http://phpvirtualbox.sourceforge.net/",
     "license": "free",
