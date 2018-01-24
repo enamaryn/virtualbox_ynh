@@ -8,7 +8,7 @@ path=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 language=$YNH_APP_ARG_LANGUAGE
 vboxuser="vbox"
-vboxpassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
+vboxpassword=$(cat /dev/urandom | tr -dc _A-Za-z0-9 | head -c16)
 vboxip=$YNH_APP_ARG_VBOXIP
 vboxport="18083"
 
