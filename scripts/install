@@ -79,7 +79,7 @@ sudo apt-get update
 sudo apt-get install virtualbox-5.0 --no-install-recommends -y
 wget -q http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
 yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
-sudo useradd -p $vboxpassword -d $datadir -m -g vboxusers -s /bin/bash $vboxuser
+sudo useradd -p $vboxpassword -d $(mkpasswd $datadir) -m -g vboxusers -s /bin/bash $vboxuser
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
 sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
 mv ../conf/vboxweb.init /etc/init.d/vboxweb
