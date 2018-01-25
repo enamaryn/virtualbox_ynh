@@ -1,27 +1,68 @@
 #!/bin/bash
-set -eu
 
-# Retrieve arguments
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE FAILURE OF THE SCRIPT
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
 app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
 path=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 language=$YNH_APP_ARG_LANGUAGE
-vboxuser="vbox"
-vboxpassword="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)"
-vboxip=$YNH_APP_ARG_VBOXIP
-vboxport="18083"
-
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
 
 ynh_app_setting_set "$app" admin "$admin"
 ynh_app_setting_set "$app" language "$language"
 
-# Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path}"
+vboxuser="vbox"
+vboxpassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
+vboxip=$YNH_APP_ARG_VBOXIP
+vboxport="18083"
 
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THIS ARGS
+#=================================================
+
+# Normalize the url path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+# Check web path availability
+ynh_webpath_available $domain $path_url
+# Register (book) web path
+ynh_webpath_register $app $domain $path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+
+ynh_app_setting_set $app domain $domain
+ynh_app_setting_set $app path $path_url
+  
+#=================================================
+# ADD VIRTUALBOX REPO
+#=================================================
+
+sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian jessie contrib' >> /etc/apt/sources.list.d/virtualbox.list"
+wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc -O- | sudo apt-key add -
+sudo apt-get update
+
+#=================================================
+# INSTALL VIRTUALBOX & DEPENDANCIES
+#=================================================
 
 # check dependances
 if ! ynh_package_is_installed "php-pear" ; then
@@ -31,8 +72,33 @@ fi
 if ! ynh_package_is_installed "unzip" ; then
   ynh_package_install "unzip"
 fi
+  
+if ! ynh_package_is_installed "virtuallbox-5.0" ; then
+  ynh_package_install "virtuallbox-5.0"
+fi
 
-# Copy source files
+#=================================================
+# CONFIGURE VBOXWEBSERV
+#=================================================
+
+wget -q http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
+yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
+sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash $vboxuser
+sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
+sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
+sudo mv ../conf/vboxweb_ynh.service /lib/systemd/system/vboxweb_ynh.service
+sudo mkdir /run/vboxweb
+sudo chown vbox:vboxusers /run/vboxweb
+sudo chmod 755 /run/vboxweb
+sudo systemctl enable vboxweb_ynh
+wget -q -P $datadir http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
+sudo chown -R vbox: "$datadir"
+sudo service vboxweb_ynh start              
+
+#=================================================
+# INSTALL PHPVIRTUALBOX
+#=================================================
+  
 src_path=/var/www/$app
 datadir=/home/yunohost.$app/
 
@@ -49,7 +115,7 @@ sed -i "s@VBOX_USER@$vboxuser@g" $vbox_conf
 sed -i "s@VBOX_PASSWORD@$vboxpassword@g" $vbox_conf
 sed -i "s@LANGUAGE@$language@g" $vbox_conf
 sudo cp $vbox_conf  $src_path/config.php
-pwd
+
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 nginx_conf=../conf/nginx.conf
@@ -67,26 +133,9 @@ sudo cp ../conf/php-fpm.conf $finalphpconf
 sudo chown root: $finalphpconf
 sudo chmod 644 $finalphpconf
 sudo chown -R www-data:www-data $src_path
+
 # Reload services
 sudo service php5-fpm reload
 sudo service nginx reload
 
-# Installation de virtualbox 
 
-sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian jessie contrib' >> /etc/apt/sources.list.d/virtualbox.list"
-wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc -O- | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install virtualbox-5.0 --no-install-recommends -y
-wget -q http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
-yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
-sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash $vboxuser
-sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
-sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
-sudo mv ../conf/vboxweb_ynh.service /lib/systemd/system/vboxweb_ynh.service
-sudo mkdir /run/vboxweb
-sudo chown vbox:vboxusers /run/vboxweb
-sudo chmod 755 /run/vboxweb
-sudo systemctl enable vboxweb_ynh
-wget -q -P $datadir http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
-sudo chown -R vbox: "$datadir"
-sudo service vboxweb_ynh start              
