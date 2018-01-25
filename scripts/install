@@ -73,8 +73,8 @@ if ! ynh_package_is_installed "unzip" ; then
   ynh_package_install "unzip"
 fi
   
-if ! ynh_package_is_installed "virtuallbox-5.0" ; then
-  ynh_package_install "virtuallbox-5.0"
+if ! ynh_package_is_installed "virtualbox-5.0" ; then
+  ynh_package_install "virtualbox-5.0"
 fi
 
 #=================================================
