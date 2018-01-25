@@ -82,9 +82,8 @@ yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-1151
 sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash $vboxuser
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
 sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
-mv ../conf/vboxweb.init /etc/init.d/vboxweb
-chmod +x   /etc/init.d/vboxweb
-sudo update-rc.d vboxweb defaults
+mv ../conf/vboxweb_ynh.service /lib/systemd/system/vboxweb_ynh.service
+sudo systemctl enable vboxweb_ynh
 wget -q -P $datadir http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
 chown -R vbox: "$datadir"
- systemctl start vboxweb
+sudo service vboxweb_ynh start

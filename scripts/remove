@@ -12,10 +12,10 @@ domain=$(ynh_app_setting_get "$app" domain)
 # stop & uninstall virtualbox
 # il faudra surement gerer l'extinction des machines allumé par la suite
 
-killall vboxwebserv
-rm /etc/init.d/vboxwebserv
-rm /etc/default/virtualbox 
-apt-get purge virtualbox-5.0
+sudo service vboxweb_ynh stop
+sudo rm /lib/systemd/system/vboxweb_ynh.service
+sudo rm /etc/default/virtualbox 
+sudo apt-get purge virtualbox-5.0
 
 # Remove webapps
 sudo rm -rf /var/www/$app
