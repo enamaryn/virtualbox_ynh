@@ -9,7 +9,15 @@ source /usr/share/yunohost/helpers
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
 
-# Remove sources
+# stop & uninstall virtualbox
+# il faudra surement gerer l'extinction des machines allumé par la suite
+
+killall vboxwebserv
+rm /etc/init.d/vboxwebserv
+rm /etc/default/virtualbox 
+apt-get purge virtualbox-5.0
+
+# Remove webapps
 sudo rm -rf /var/www/$app
 
 # Remove nginx configuration file
