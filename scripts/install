@@ -38,19 +38,19 @@ vboxport="18083"
 #=================================================
 
 # Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
+path=$(ynh_normalize_url_path $path)
 
 # Check web path availability
-ynh_webpath_available $domain $path_url
+ynh_webpath_available $domain $path
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register $app $domain $path
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 
 ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
+ynh_app_setting_set $app path $path
   
 #=================================================
 # ADD VIRTUALBOX REPO
