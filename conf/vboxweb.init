@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo -u vbox vboxwebsrv &
+sudo -u vbox vboxwebsrv & > /dev/null 2>&1
