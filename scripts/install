@@ -8,7 +8,7 @@ path=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 language=$YNH_APP_ARG_LANGUAGE
 vboxuser="vbox"
-vboxpassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
+vboxpassword="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)"
 vboxip=$YNH_APP_ARG_VBOXIP
 vboxport="18083"
 
@@ -82,8 +82,11 @@ yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-1151
 sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash $vboxuser
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
 sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
-mv ../conf/vboxweb_ynh.service /lib/systemd/system/vboxweb_ynh.service
+sudo mv ../conf/vboxweb_ynh.service /lib/systemd/system/vboxweb_ynh.service
+sudo mkdir /run/vboxweb
+sudo chown vbox:vboxusers /run/vboxweb
+sudo chmod 755 /run/vboxweb
 sudo systemctl enable vboxweb_ynh
 wget -q -P $datadir http://download.virtualbox.org/virtualbox/5.0.40/VBoxGuestAdditions_5.0.40.iso
-chown -R vbox: "$datadir"
-sudo service vboxweb_ynh start
+sudo chown -R vbox: "$datadir"
+sudo service vboxweb_ynh start              
