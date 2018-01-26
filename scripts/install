@@ -24,14 +24,13 @@ domain=$YNH_APP_ARG_DOMAIN
 path=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 language=$YNH_APP_ARG_LANGUAGE
+vboxip=$YNH_APP_ARG_VBOXIP
 
 ynh_app_setting_set "$app" admin "$admin"
 ynh_app_setting_set "$app" language "$language"
 
-vboxuser="vbox"
 vboxpassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
-vboxip=$YNH_APP_ARG_VBOXIP
-vboxport="18083"
+
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THIS ARGS
@@ -111,10 +110,10 @@ sudo mv phpvirtualbox-5.0-5/* $src_path/
 # Modifiy Phpvirtualbox conf
 vbox_conf=../conf/config.php-example
 sed -i "s@VBOX_IP@$vboxip@g" $vbox_conf
-sed -i "s@VBOX_PORT@$vboxport@g" $vbox_conf
-sed -i "s@VBOX_USER@$vboxuser@g" $vbox_conf
 sed -i "s@VBOX_PASSWORD@$vboxpassword@g" $vbox_conf
 sed -i "s@LANGUAGE@$language@g" $vbox_conf
+sed -i "s@ADMINUSER@$admin@g" $vbox_conf
+sed -i "s@DATADIR@$datadir@g" $vbox_conf
 sudo cp $vbox_conf  $src_path/config.php
 
 
