@@ -15,7 +15,7 @@ domain=$(ynh_app_setting_get "$app" domain)
 sudo service vboxweb_ynh stop
 sudo rm /lib/systemd/system/vboxweb_ynh.service
 sudo rm /etc/default/virtualbox 
-sudo apt-get purge virtualbox-5.0
+sudo apt-get purge virtualbox-5.2
 
 # Remove webapps
 sudo rm -rf /var/www/$app

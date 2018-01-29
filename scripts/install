@@ -72,8 +72,8 @@ if ! ynh_package_is_installed "unzip" ; then
   ynh_package_install "unzip"
 fi
   
-if ! ynh_package_is_installed "virtualbox-5.0" ; then
-  ynh_package_install "virtualbox-5.0"
+if ! ynh_package_is_installed "virtualbox-5.2" ; then
+  ynh_package_install "virtualbox-5.2"
 fi
 
 #=================================================
@@ -82,8 +82,8 @@ fi
         
 datadir=/home/yunohost.app/$app
                              
-wget -q http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
-yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
+#wget -q http://download.virtualbox.org/virtualbox/5.0.40/Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
+#yes | VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.40-115130.vbox-extpack
 sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash vbox
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
 sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
@@ -102,10 +102,9 @@ sudo service vboxweb_ynh start
 
 src_path=/var/www/$app
                              
-wget  -q http://freefr.dl.sourceforge.net/project/phpvirtualbox/phpvirtualbox-5.0-5.zip
-unzip phpvirtualbox-5.0-5.zip
+git clone https://github.com/phpvirtualbox/phpvirtualbox.git
 sudo mkdir $src_path
-sudo mv phpvirtualbox-5.0-5/* $src_path/
+sudo mv phpvirtualbox/* $src_path/
 
 # Modifiy Phpvirtualbox conf
 vbox_conf=../conf/config.php-example
