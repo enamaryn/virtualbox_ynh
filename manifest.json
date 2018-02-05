@@ -7,7 +7,7 @@
         "fr": "Virtualbox et PhpVirtualBox pour YunoHost."
     },
     "url": "http://phpvirtualbox.sourceforge.net/",
-    "license": "free",
+    "license": "PUEL",
     "maintainer": {
         "name": "Jeremy MANSON",
         "email": "jeremy.manson@jamson.fr",
