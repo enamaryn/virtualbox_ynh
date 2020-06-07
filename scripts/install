@@ -64,6 +64,10 @@ sudo apt-get update
 #=================================================
 
 # check dependances
+if ! ynh_package_is_installed "php-soap" ; then
+  ynh_package_install "php_soap"
+fi
+
 if ! ynh_package_is_installed "php-pear" ; then
   ynh_package_install "php-pear"
 fi
