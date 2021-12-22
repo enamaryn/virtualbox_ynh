@@ -88,6 +88,7 @@ datadir=/home/yunohost.app/$app
                              
 wget -q $VBOX_DOWNLOAD/$VBOX_EXTPACK
 yes | sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-6.1.30-148432.vbox-extpack
+sudo addgroup vboxusers
 sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash vbox
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
 sudo sh -c "echo "VBOXWEB_HOST=127.0.0.1" >> /etc/default/virtualbox"
