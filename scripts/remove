@@ -25,5 +25,5 @@ sudo rm -rf /var/www/$app
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 sudo rm -f /etc/php5/fpm/pool.d/$app.conf
 # Reload nginx service
-sudo service php5-fpm reolad
+sudo service php5-fpm reload
 sudo service nginx reload
