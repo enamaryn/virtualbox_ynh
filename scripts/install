@@ -35,6 +35,7 @@ vboxpassword=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THIS ARGS
 #=================================================
+ynh_script_progression --message="Vérification des arguments.." --time --weight=1
 
 # Normalize the url path syntax
 path=$(ynh_normalize_url_path $path)
@@ -54,6 +55,7 @@ ynh_app_setting_set $app path $path
 #=================================================
 # ADD VIRTUALBOX REPO
 #=================================================
+ynh_script_progression --message="Ajout du repo officiel Virtualbox.." --time --weight=1
 
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian buster contrib' > /etc/apt/sources.list.d/virtualbox.list"
 wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc -O- | sudo apt-key add -
@@ -62,7 +64,7 @@ sudo apt-get update
 #=================================================
 # INSTALL VIRTUALBOX & DEPENDANCIES
 #=================================================
-
+ynh_script_progression --message="Installation de virtualbox et dépendances..." --time --weight=1
 # check dependances
 if ! ynh_package_is_installed "php-soap" ; then
   ynh_package_install "php_soap"
@@ -83,11 +85,15 @@ fi
 #=================================================
 # CONFIGURE VBOXWEBSERV
 #=================================================
-        
+ynh_script_progression --message="Téléchargement de Extension Pack..." --time --weight=1 
+
 datadir=/home/yunohost.app/$app
                              
 wget -q $VBOX_DOWNLOAD/$VBOX_EXTPACK
 yes | sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-6.1.30-148432.vbox-extpack
+
+ynh_script_progression --message="Création du groupe vboxusers et user Vbox.." --time --weight=1
+
 sudo addgroup vboxusers
 sudo useradd -p $(mkpasswd $vboxpassword) -d $datadir -m -g vboxusers -s /bin/bash vbox
 sudo sh -c "echo "VBOXWEB_USER=vbox" > /etc/default/virtualbox"
@@ -104,6 +110,7 @@ sudo service vboxweb_ynh start
 #=================================================
 # INSTALL PHPVIRTUALBOX
 #=================================================
+ynh_script_progression --message="Installation de PhpVirtualbox..." --time --weight=1
 
 src_path=/var/www/$app
                              
@@ -111,6 +118,7 @@ git clone https://github.com/phpvirtualbox/phpvirtualbox.git
 sudo mkdir $src_path
 sudo mv phpvirtualbox/* $src_path/
 
+ynh_script_progression --message="Modification du fichier Conf phpvirtualbox..." --time --weight=1
 # Modifiy Phpvirtualbox conf
 vbox_conf=../conf/config.php-example
 sed -i "s@VBOX_IP@$vboxip@g" $vbox_conf
@@ -120,7 +128,7 @@ sed -i "s@ADMINUSER@$admin@g" $vbox_conf
 sed -i "s@DATADIR@$datadir@g" $vbox_conf
 sudo cp $vbox_conf  $src_path/config.php
 
-
+ynh_script_progression --message="Modification de nginx..." --time --weight=1
 # Modify Nginx configuration file and copy it to Nginx conf directory
 nginx_conf=../conf/nginx.conf
 sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
@@ -138,6 +146,7 @@ sudo chown root: $finalphpconf
 sudo chmod 644 $finalphpconf
 sudo chown -R www-data:www-data $src_path
 
+ynh_script_progression --message="Relance des services.." --time --weight=1
 # Reload services
 sudo service php5-fpm reload
 sudo service nginx reload
