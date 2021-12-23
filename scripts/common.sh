@@ -1,5 +1,5 @@
-export VBOX_VERSION="6.1"
-export VBOX_DOWNLOAD="https://download.virtualbox.org/virtualbox/6.1.30"
-export VBOX_EXTPACK="Oracle_VM_VirtualBox_Extension_Pack-6.1.30-148432.vbox-extpack"
-export VBOX_GUEST="VBoxGuestAdditions_6.1.30.iso"
+export VBOX_VERSION="5.2"
+export VBOX_DOWNLOAD="https://download.virtualbox.org/virtualbox/5.2.44"
+export VBOX_EXTPACK="Oracle_VM_VirtualBox_Extension_Pack-5.2.44-139111.vbox-extpack"
+export VBOX_GUEST="VBoxGuestAdditions_5.2.44.iso"
 
