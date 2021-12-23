@@ -16,7 +16,7 @@ VBoxManage extpack uninstall "Oracle VM VirtualBox Extension Pack"
 sudo service vboxweb_ynh stop
 sudo rm /lib/systemd/system/vboxweb_ynh.service
 sudo rm /etc/default/virtualbox 
-sudo apt-get purge virtualbox-$VBOX_VERSION
+sudo apt-get purge -y virtualbox-*
 
 # Remove webapps
 sudo rm -rf /var/www/$app
