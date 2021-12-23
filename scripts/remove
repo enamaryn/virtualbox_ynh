@@ -24,6 +24,11 @@ sudo rm -rf /var/www/$app
 # Remove nginx configuration file
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 sudo rm -f /etc/php5/fpm/pool.d/$app.conf
+
+# Remove vbox user et vboxusers group
+sudo deluser vbox
+sudo delgroup vboxusers
+
 # Reload nginx service
 sudo service php5-fpm reload
 sudo service nginx reload
