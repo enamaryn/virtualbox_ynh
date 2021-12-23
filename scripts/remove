@@ -18,8 +18,9 @@ sudo rm /lib/systemd/system/vboxweb_ynh.service
 sudo rm /etc/default/virtualbox 
 sudo apt-get purge -y virtualbox-*
 
-# Remove webapps
+# Remove webapps 
 sudo rm -rf /var/www/$app
+sudo rm -rf /run/vboxweb
 
 # Remove nginx configuration file
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
